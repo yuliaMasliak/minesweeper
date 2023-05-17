@@ -1,0 +1,306 @@
+:root {
+  --font: 'JetBrains Mono', monospace;
+}
+
+.light-mode {
+  background: #ada996;
+  background: linear-gradient(to right, #eaeaea, #dbdbdb, #f2f2f2, #dbdad2);
+  color: #431447;
+  font-family: var(--font);
+}
+.dark-mode {
+  background: #431447;
+  background: linear-gradient(to right, #2f2631, #2e2222, #0f0808, #29281d);
+  color: #f6f1f7;
+  font-family: var(--font);
+}
+.sub-title {
+  width: fit-content;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+.flag {
+  color: red;
+}
+.mode-btns-block {
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 15px;
+}
+.title img {
+  width: 30%;
+  margin: 0px auto;
+}
+.title,
+.time,
+.clicks-counter,
+.bombs-selector,
+.flags-counter {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.field-10,
+.field-15,
+.field-25 {
+  display: grid;
+  margin: 0px auto;
+  margin-top: 20px;
+  max-width: fit-content;
+  border: 1px solid grey;
+  border-radius: 3px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+.field-10 {
+  grid-template-columns: repeat(10, 33px);
+  grid-template-rows: repeat(10, 33px);
+}
+.field-15 {
+  grid-template-columns: repeat(15, 33px);
+  grid-template-rows: repeat(15, 33px);
+}
+.field-25 {
+  grid-template-columns: repeat(25, 33px);
+  grid-template-rows: repeat(25, 33px);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  justify-content: center;
+  cursor: pointer;
+  color: red;
+  border-radius: 3px;
+  background-color: #948596;
+}
+.cell:disabled {
+  border: 1px solid grey;
+  background-color: #cfcdcf;
+}
+.mode-btns-block {
+  display: flex;
+  justify-content: center;
+  column-gap: 15px;
+  margin-bottom: 15px;
+}
+.mode-btn,
+.close-btn {
+  align-items: center;
+  background-color: #fcfcfd;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    #d6d6e7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #431447;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: (--font);
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+  font-size: 18px;
+  font-weight: 700;
+}
+.close-btn {
+  display: block;
+  margin: 0px auto;
+  margin-top: 20px;
+}
+.mode-btn:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    #d6d6e7 0 -3px 0 inset;
+}
+
+.mode-btn:disabled {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px,
+    #d6d6e7 0 -3px 0 inset;
+  color: grey;
+}
+.hidden {
+  visibility: hidden;
+  position: absolute;
+}
+.active {
+  visibility: visible;
+  width: fit-content;
+  position: fixed;
+  float: left;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 5px;
+  text-align: center;
+  background-color: #271029c4;
+  padding: 50px;
+  color: white;
+  font-size: 30px;
+  z-index: 99;
+}
+.active img {
+  width: 60vw;
+}
+.result-row {
+  display: flex;
+  justify-content: start;
+  font-size: 1rem;
+}
+.row-flex-item {
+  width: 50px;
+  border: 0.5px dotted white;
+  padding: 5px;
+}
+.row-flex-item-number {
+  width: 30px;
+  border: 0.5px dotted white;
+  padding: 5px;
+}
+.row-flex-item-middle {
+  width: 150px;
+  border: 0.5px dotted white;
+  padding: 5px;
+}
+.mode-switcher,
+.sound-switcher {
+  width: 45px;
+  cursor: pointer;
+  position: absolute;
+}
+.mode-switcher {
+  top: 5%;
+  left: 5%;
+}
+.sound-switcher {
+  top: 5%;
+  right: 5%;
+}
+.flags-counter img {
+  width: 25px;
+}
+.score-board {
+  display: grid;
+  border: 3px solid rgb(173, 119, 119);
+  max-width: fit-content;
+  margin: 0px auto;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: rgba(163, 160, 160, 0.17) 0px -23px 25px 0px inset,
+    rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(155, 148, 148, 0.1) 0px -79px 40px 0px inset,
+    rgba(139, 132, 132, 0.06) 0px 2px 1px, rgba(145, 138, 138, 0.09) 0px 4px 2px,
+    rgba(139, 133, 133, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+    rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+.bombs-selector input {
+  border: none;
+  border-radius: 8px;
+  border-bottom: 2px solid grey;
+  border-right: 2px solid grey;
+  text-align: center;
+  color: #431447;
+  font-weight: 700;
+  margin-right: 5px;
+}
+
+.bombs-selector button {
+  background-color: #fff;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+  box-sizing: border-box;
+  color: #0f1111;
+  cursor: pointer;
+  display: inline-block;
+  font-family: 'Amazon Ember', sans-serif;
+  font-size: 13px;
+  line-height: 29px;
+  padding: 0 10px 0 11px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.bombs-selector button:hover {
+  background-color: #f7fafa;
+}
+
+@media (max-width: 900px) {
+  .field-25 {
+    grid-template-columns: repeat(25, 25px);
+    grid-template-rows: repeat(25, 25px);
+  }
+}
+
+@media (max-width: 680px) {
+  .field-25 {
+    grid-template-columns: repeat(25, 18px);
+    grid-template-rows: repeat(25, 18px);
+  }
+  .field-15 {
+    grid-template-columns: repeat(15, 25px);
+    grid-template-rows: repeat(15, 25px);
+  }
+  .mode-btn {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .mode-switcher {
+    width: 35px;
+    top: 2%;
+    left: 2%;
+  }
+  .sound-switcher {
+    width: 35px;
+    top: 2%;
+    right: 2%;
+  }
+}
+@media (max-width: 400px) {
+  .field-25 {
+    grid-template-columns: repeat(25, 12px);
+    grid-template-rows: repeat(25, 12px);
+  }
+  .field-15 {
+    grid-template-columns: repeat(15, 20px);
+    grid-template-rows: repeat(15, 20px);
+  }
+  .field-10 {
+    grid-template-columns: repeat(10, 25px);
+    grid-template-rows: repeat(10, 25px);
+  }
+  .mode-switcher {
+    width: 25px;
+    top: 2%;
+    left: 2%;
+  }
+  .sound-switcher {
+    width: 25px;
+    top: 2%;
+    right: 2%;
+  }
+  .cell {
+    font-size: 0.6rem;
+  }
+  .sub-title {
+    font-size: 12px;
+  }
+}
