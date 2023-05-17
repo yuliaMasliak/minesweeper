@@ -34,7 +34,6 @@ let arrayOfResults = [];
 let totalCount;
 let flags = 10;
 let arrOfPlacedFlags = [];
-let firstClick = true;
 
 export function createField(count, bombs) {
   SIZE = count;
@@ -59,10 +58,9 @@ export function createField(count, bombs) {
 }
 
 function addNewGame(bombs) {
-  console.log(firstClick);
   clearInterval(interval);
+
   if (localStorage.getItem('state')) {
-    console.log('state');
     let arrayOfCells = JSON.parse(localStorage.getItem('state'));
     arrayOfCells.forEach((el) => {
       let cell = document.createElement('button');
@@ -87,7 +85,6 @@ function addNewGame(bombs) {
     flags = Number(localStorage.getItem('flags'));
     flag.innerHTML = flags;
   } else {
-    console.log('no state');
     let id = 1;
     clicks = 0;
     time = 0;
@@ -148,9 +145,9 @@ function checkWinner() {
     });
     let resultToSubmit = arrayOfResults.slice(0, 10);
     localStorage.setItem('result', JSON.stringify(resultToSubmit));
-    modal.innerHTML = '<img src="./assets/cool.gif">';
-    modal.style.backgroundColor = 'transparent';
     disableModeBtns();
+    modalResult.innerHTML = '<img src="./assets/cool.gif">';
+    modal.style.backgroundColor = 'transparent';
     modal.classList.add('active');
     winSound.play();
     setTimeout(() => {
@@ -159,10 +156,10 @@ function checkWinner() {
           cell.innerHTML = 'X';
           cell.disabled = true;
           modal.style.backgroundColor = '#271029c4';
-          modal.innerHTML = `<div class="modal-result">
+          modalResult.innerHTML = `<div class="modal-result">
           Hooray! You found all mines in ${time} seconds and ${clicks} moves!
           <br>`;
-          modal.append(closeBtn);
+          modalResult.append(closeBtn);
           closeBtn.addEventListener('click', () => {
             modal.classList.remove('active');
             enableModeBtns();
@@ -204,7 +201,7 @@ function openCell(id) {
     cell.disabled = true;
     clearInterval(interval);
     disableModeBtns();
-    modal.innerHTML = '<img src="./assets/boomm-1.gif">';
+    modalResult.innerHTML = '<img src="./assets/boomm-1.gif">';
 
     boomSound.play();
     modal.classList.add('active');
@@ -215,8 +212,8 @@ function openCell(id) {
       cells.forEach((cell) => openCell(cell.id));
       clearLocalStorage();
       modal.style.backgroundColor = '#271029c4';
-      modal.innerHTML = `Game over. Try again!`;
-      modal.append(closeBtn);
+      modalResult.innerHTML = `Game over. Try again!`;
+      modalResult.append(closeBtn);
       closeBtn.addEventListener('click', () => {
         modal.classList.remove('active');
         enableModeBtns();
@@ -317,7 +314,6 @@ function clearLocalStorage() {
   localStorage.removeItem('time');
   localStorage.removeItem('flags');
   localStorage.removeItem('bombs-count');
-  firstClick = true;
 }
 function colorGenerator(digit, cell) {
   switch (digit) {
@@ -506,7 +502,6 @@ function generateResults(results) {
   modalResult.innerHTML = '';
 
   results.forEach((res, i) => {
-    console.log('result');
     let row = document.createElement('div');
     row.className = 'result-row';
     let number = document.createElement('div');
@@ -519,13 +514,13 @@ function generateResults(results) {
     winLoss.innerHTML = res.result;
     winLoss.className = 'row-flex-item';
     row.append(number, date, winLoss);
-    console.log(row);
+
     modalResult.append(row);
   });
 
-  modal.append(closeBtn);
+  modalResult.append(closeBtn);
   modal.classList.add('active');
-  console.log(modal);
+
   disableModeBtns();
   closeBtn.addEventListener('click', () => {
     modal.classList.remove('active');
@@ -568,7 +563,6 @@ field.addEventListener('click', (event) => {
     if (arrayOfBobmsIndexes.indexOf(+cell.id) > 1) {
       createBobms(SIZE, bombsQuantity);
     } else {
-      firstClick = false;
       openCell(cell.id);
     }
     time = 1;
@@ -627,8 +621,10 @@ hardBtn.addEventListener('click', () => {
 });
 
 resultBtn.addEventListener('click', () => {
-  let arrOfResults = JSON.parse(localStorage.getItem('result'));
-  generateResults(arrOfResults);
+  if (localStorage.getItem('result')) {
+    let arrOfResults = JSON.parse(localStorage.getItem('result'));
+    generateResults(arrOfResults);
+  }
 });
 
 modeSwitcher.addEventListener('click', () => {

@@ -36,8 +36,8 @@ const modal = document.createElement('div');
 modal.className = 'hidden';
 
 const modalResult = document.createElement('div');
-modalResult.className = 'hidden';
-
+modalResult.className = 'modal-result';
+modal.append(modalResult);
 const timer = document.createElement('div');
 timer.className = 'timer';
 timer.innerHTML = 'Time: ';
