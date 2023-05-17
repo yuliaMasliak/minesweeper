@@ -30,7 +30,7 @@ let clicks = 0;
 let time = 0;
 let interval;
 let arrayOfAllNotBombs = [];
-let arrayOfResults = [];
+export let arrayOfResults = [];
 let totalCount;
 let flags = 10;
 let arrOfPlacedFlags = [];
@@ -621,9 +621,8 @@ hardBtn.addEventListener('click', () => {
 });
 
 resultBtn.addEventListener('click', () => {
-  if (localStorage.getItem('result')) {
-    let arrOfResults = JSON.parse(localStorage.getItem('result'));
-    generateResults(arrOfResults);
+  if (arrayOfResults.length > 0) {
+    generateResults(arrayOfResults);
   }
 });
 

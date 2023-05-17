@@ -1,4 +1,4 @@
-import { createField, switchScreenMode, switchSoundMode } from './events.js';
+import { createField, switchScreenMode, switchSoundMode, arrayOfResults } from './events.js';
 import { bombsChoice } from './elements.js';
 import '../style.css';
 import './assets/moon-icon.png';
@@ -20,6 +20,11 @@ import './assets/flag.mp3';
 import './assets/win.mp3';
 
 window.addEventListener('load', () => {
+  if (localStorage.getItem('result')) {
+    JSON.parse(localStorage.getItem('result')).forEach((el) => {
+      arrayOfResults.push(el);
+    });
+  }
   switchScreenMode();
   switchSoundMode();
   if (Number(localStorage.getItem('mode'))) {
