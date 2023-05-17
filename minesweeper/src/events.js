@@ -34,11 +34,13 @@ let arrayOfResults = [];
 let totalCount;
 let flags = 10;
 let arrOfPlacedFlags = [];
+let firstClick = true;
 
-export function createField(count, bombs = 10) {
+export function createField(count, bombs) {
   SIZE = count;
   bombsQuantity = bombs;
   bombsChoice.value = bombs;
+
   totalCount = count * count;
   switch (count) {
     case 10:
@@ -53,12 +55,14 @@ export function createField(count, bombs = 10) {
     default:
       break;
   }
-  addNewGame(count, bombs);
+  addNewGame(bombs);
 }
 
-function addNewGame(count, bombs) {
+function addNewGame(bombs) {
+  console.log(firstClick);
   clearInterval(interval);
   if (localStorage.getItem('state')) {
+    console.log('state');
     let arrayOfCells = JSON.parse(localStorage.getItem('state'));
     arrayOfCells.forEach((el) => {
       let cell = document.createElement('button');
@@ -71,8 +75,6 @@ function addNewGame(count, bombs) {
     });
     arrayOfBobmsIndexes = JSON.parse(localStorage.getItem('bombs'));
 
-    createArrayOfNotBombs();
-
     clicks = Number(localStorage.getItem('clicks'));
     click.innerHTML = clicks;
     time = Number(localStorage.getItem('time'));
@@ -83,10 +85,9 @@ function addNewGame(count, bombs) {
       localStorage.setItem('time', time);
     }, 1000);
     flags = Number(localStorage.getItem('flags'));
-    bombsChoice.value = Number(localStorage.getItem('bombs-count'));
-
-    flag.innerHTML = Number(localStorage.getItem('flags'));
+    flag.innerHTML = flags;
   } else {
+    console.log('no state');
     let id = 1;
     clicks = 0;
     time = 0;
@@ -102,21 +103,22 @@ function addNewGame(count, bombs) {
       wholeQuantity -= 1;
       id += 1;
     }
+    localStorage.setItem('count-bombs', bombs);
   }
-  bombsChoice.value = bombs;
+  createBobms(SIZE, bombs);
   timeSec.innerHTML = time;
   click.innerHTML = clicks;
 }
 
-function createBobms(count, openedCell, bombs) {
+function createBobms(count, bombs) {
   arrayOfBobmsIndexes.length = 0;
   while (arrayOfBobmsIndexes.length < +bombs) {
     const index = Math.floor(Math.random() * (count * count - 1) + 1);
-    if (arrayOfBobmsIndexes.indexOf(index) < 0 && index !== +openedCell) {
+    if (arrayOfBobmsIndexes.indexOf(index) < 0) {
       arrayOfBobmsIndexes.push(index);
     }
   }
-
+  createArrayOfNotBombs();
   localStorage.setItem('bombs', JSON.stringify(arrayOfBobmsIndexes));
 }
 
@@ -309,10 +311,13 @@ function openCell(id) {
 
 function clearLocalStorage() {
   localStorage.removeItem('state');
+  localStorage.removeItem('mode');
   localStorage.removeItem('bombs');
   localStorage.removeItem('clicks');
   localStorage.removeItem('time');
   localStorage.removeItem('flags');
+  localStorage.removeItem('bombs-count');
+  firstClick = true;
 }
 function colorGenerator(digit, cell) {
   switch (digit) {
@@ -346,7 +351,7 @@ function colorGenerator(digit, cell) {
 }
 
 function openNeighbourCells(id) {
-  if (+id > 0 && +id < totalCount) {
+  if (+id > 0 && +id <= totalCount) {
     let cell = document.getElementById(id);
     let countNeighbourBombs = getNeighbourBombCount(id);
 
@@ -501,6 +506,7 @@ function generateResults(results) {
   modalResult.innerHTML = '';
 
   results.forEach((res, i) => {
+    console.log('result');
     let row = document.createElement('div');
     row.className = 'result-row';
     let number = document.createElement('div');
@@ -513,13 +519,16 @@ function generateResults(results) {
     winLoss.innerHTML = res.result;
     winLoss.className = 'row-flex-item';
     row.append(number, date, winLoss);
+    console.log(row);
     modalResult.append(row);
   });
-  modalResult.append(closeBtn);
-  modalResult.classList.add('active');
+
+  modal.append(closeBtn);
+  modal.classList.add('active');
+  console.log(modal);
   disableModeBtns();
   closeBtn.addEventListener('click', () => {
-    modalResult.classList.remove('active');
+    modal.classList.remove('active');
     enableModeBtns();
   });
 }
@@ -540,7 +549,6 @@ function changeModeOfBombs(size, bombs) {
   clearInterval(interval);
   modal.classList.remove('active');
   field.innerHTML = '';
-  clearLocalStorage();
   field.className = `field-${localStorage.getItem('mode')}`;
   flag.innerHTML = bombs;
   localStorage.setItem('flags', bombs);
@@ -550,13 +558,19 @@ function changeModeOfBombs(size, bombs) {
 field.addEventListener('click', (event) => {
   clickSound.play();
   let cell = event.target;
-
   if (localStorage.getItem('state')) {
     cliskCount();
     openCell(cell.id);
     saveState();
     checkWinner();
   } else {
+    createBobms(SIZE, bombsQuantity);
+    if (arrayOfBobmsIndexes.indexOf(+cell.id) > 1) {
+      createBobms(SIZE, bombsQuantity);
+    } else {
+      firstClick = false;
+      openCell(cell.id);
+    }
     time = 1;
     timeSec.innerHTML = time;
     interval = setInterval(() => {
@@ -566,8 +580,6 @@ field.addEventListener('click', (event) => {
     }, 1000);
     cell.disabled = true;
     cliskCount();
-    createBobms(SIZE, cell.id, bombsQuantity);
-    createArrayOfNotBombs();
     saveState();
     checkWinner();
   }
@@ -592,6 +604,7 @@ field.addEventListener('contextmenu', (event) => {
 });
 
 easyBtn.addEventListener('click', () => {
+  clearLocalStorage();
   changeModeOfBombs(10, 10);
   localStorage.setItem('mode', 10);
   localStorage.setItem('bombs-count', 10);
@@ -599,12 +612,14 @@ easyBtn.addEventListener('click', () => {
 });
 
 mediumBtn.addEventListener('click', () => {
+  clearLocalStorage();
   changeModeOfBombs(15, 15);
   localStorage.setItem('mode', 15);
   localStorage.setItem('bombs-count', 15);
   bombsChoice.value = 15;
 });
 hardBtn.addEventListener('click', () => {
+  clearLocalStorage();
   changeModeOfBombs(25, 25);
   localStorage.setItem('mode', 25);
   localStorage.setItem('bombs-count', 25);
@@ -638,10 +653,18 @@ soundSwitcher.addEventListener('click', () => {
 });
 
 changeBombsBtn.addEventListener('click', () => {
+  clearLocalStorage();
   bombsQuantity = Number(bombsChoice.value);
-  localStorage.setItem('bombs-count', bombsQuantity);
   localStorage.setItem('flags', bombsQuantity);
-
-  changeModeOfBombs(Number(localStorage.getItem('mode')), bombsQuantity);
+  localStorage.setItem('count-bombs', bombsQuantity);
+  changeModeOfBombs(SIZE, bombsQuantity);
   flag.innerHTML = bombsQuantity;
+});
+
+bombsChoice.addEventListener('change', () => {
+  if (bombsChoice.value > 99) {
+    changeBombsBtn.disabled = true;
+  } else {
+    changeBombsBtn.disabled = false;
+  }
 });
