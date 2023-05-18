@@ -589,7 +589,9 @@ field.addEventListener('contextmenu', (event) => {
       removedFlagsCount();
     } else {
       cell.disabled = false;
+      cell.style.color = 'red';
       cell.innerHTML = '&#9872';
+
       placedFlagsCount();
     }
 
