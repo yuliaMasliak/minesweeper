@@ -5,7 +5,7 @@ const titleImg = document.createElement('img');
 title.append(titleImg);
 
 const subTitle = document.createElement('p');
-subTitle.innerHTML = 'Press right mouse button to place the <span class="flag">&#9872</span>';
+subTitle.innerHTML = 'Press right mouse button to place <span class="flag">&#9872</span>';
 subTitle.classList.add('sub-title');
 const field = document.createElement('div');
 field.classList.add('field-10');
