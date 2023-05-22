@@ -146,7 +146,7 @@ function checkWinner() {
     let resultToSubmit = arrayOfResults.slice(0, 10);
     localStorage.setItem('result', JSON.stringify(resultToSubmit));
     disableModeBtns();
-    modalResult.innerHTML = '<img src="./assets/cool.gif">';
+    modalResult.innerHTML = '<img src="./assets/cool.gif" alt="cool">';
     modal.style.backgroundColor = 'transparent';
     modal.classList.add('active');
     winSound.play();
@@ -201,7 +201,7 @@ function openCell(id) {
     cell.disabled = true;
     clearInterval(interval);
     disableModeBtns();
-    modalResult.innerHTML = '<img src="./assets/boomm-1.gif">';
+    modalResult.innerHTML = '<img src="./assets/boomm-1.gif" alt="boom">';
 
     boomSound.play();
     modal.classList.add('active');
@@ -472,11 +472,13 @@ export function switchScreenMode() {
     modeSwitcher.src = './assets/moon-icon.png';
 
     titleImg.src = './assets/title-black.png';
+    titleImg.alt = 'dark title';
     document.body.className = 'light-mode';
   } else if (screenMode == 'dark') {
     modeSwitcher.src = './assets/sun-icon.png';
 
     titleImg.src = './assets/title-light.png';
+    titleImg.alt = 'light title';
     document.body.className = 'dark-mode';
   }
 }

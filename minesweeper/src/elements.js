@@ -54,7 +54,7 @@ click.className = 'click';
 clicksCounter.append(click);
 let flagCounter = document.createElement('div');
 flagCounter.className = 'flags-counter';
-flagCounter.innerHTML = '<img src="./assets/flag1-icon.png">: ';
+flagCounter.innerHTML = '<img src="./assets/flag1-icon.png" alt="flag">: ';
 const flag = document.createElement('span');
 flag.className = 'flag';
 flagCounter.append(flag);
