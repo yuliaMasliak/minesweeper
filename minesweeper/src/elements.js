@@ -31,7 +31,8 @@ modeBtns.append(easyBtn, mediumBtn, hardBtn, resultBtn);
 let closeBtn = document.createElement('button');
 closeBtn.className = 'close-btn';
 closeBtn.innerHTML = 'Close';
-
+const modalBackground = document.createElement('div');
+modalBackground.className = 'hidden';
 const modal = document.createElement('div');
 modal.className = 'hidden';
 
@@ -84,10 +85,11 @@ let bombsChoiceLabel = document.createElement('label');
 bombsChoiceLabel.innerHTML = 'Choose bombs quantity ';
 let bombsChoice = document.createElement('input');
 bombsChoice.type = 'number';
-bombsChoice.min = 1;
+bombsChoice.min = 10;
 bombsChoice.max = 99;
 let changeBombsBtn = document.createElement('button');
-changeBombsBtn.innerHTML = 'Change';
+changeBombsBtn.innerHTML = 'Generate';
+changeBombsBtn.classList.add('generate-btn');
 
 bombsCounter.append(bombsChoiceLabel, bombsChoice, changeBombsBtn);
 
@@ -104,7 +106,8 @@ document.body.append(
   clickSound,
   flagSound,
   winSound,
-  boomSound
+  boomSound,
+  modalBackground
 );
 
 export {
@@ -131,4 +134,5 @@ export {
   changeBombsBtn,
   flagCounter,
   flag,
+  modalBackground,
 };

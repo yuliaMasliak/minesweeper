@@ -19,6 +19,7 @@ import {
   bombsChoice,
   changeBombsBtn,
   flag,
+  modalBackground,
 } from './elements.js';
 //images
 
@@ -102,17 +103,23 @@ function addNewGame(bombs) {
     }
     localStorage.setItem('count-bombs', bombs);
   }
-  createBobms(SIZE, bombs);
+
   timeSec.innerHTML = time;
   click.innerHTML = clicks;
 }
 
-function createBobms(count, bombs) {
+function createBobms(count, bombs, openedCellId) {
   arrayOfBobmsIndexes.length = 0;
+  function getRandom(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
+  }
   while (arrayOfBobmsIndexes.length < +bombs) {
-    const index = Math.floor(Math.random() * (count * count - 1) + 1);
-    if (arrayOfBobmsIndexes.indexOf(index) < 0) {
-      arrayOfBobmsIndexes.push(index);
+    const index = getRandom(1, count * count + 1);
+
+    if (index !== +openedCellId) {
+      if (arrayOfBobmsIndexes.indexOf(index) < 0) {
+        arrayOfBobmsIndexes.push(index);
+      }
     }
   }
   createArrayOfNotBombs();
@@ -149,6 +156,7 @@ function checkWinner() {
     modalResult.innerHTML = '<img src="./assets/cool.gif" alt="cool">';
     modal.style.backgroundColor = 'transparent';
     modal.classList.add('active');
+    modalBackground.classList.add('active-modal');
     winSound.play();
     setTimeout(() => {
       cells.forEach((cell) => {
@@ -161,14 +169,19 @@ function checkWinner() {
           <br>`;
           modalResult.append(closeBtn);
           closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-            enableModeBtns();
+            closeModal();
           });
           clearLocalStorage();
         }
       });
     }, 2000);
   }
+}
+
+function closeModal() {
+  modal.classList.remove('active');
+  modalBackground.classList.remove('active-modal');
+  enableModeBtns();
 }
 
 function isBomb(id) {
@@ -195,17 +208,17 @@ function openCell(id) {
       }/${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`,
       result: 'loser',
     });
-    let resultToSubmit = arrayOfResults.slice(0, 10);
-    localStorage.setItem('result', JSON.stringify(resultToSubmit));
+
+    localStorage.setItem('result', JSON.stringify(arrayOfResults));
     cell.innerHTML = 'X';
     cell.disabled = true;
     clearInterval(interval);
     disableModeBtns();
     modalResult.innerHTML = '<img src="./assets/boomm-1.gif" alt="boom">';
-
     boomSound.play();
     modal.classList.add('active');
     modal.style.backgroundColor = 'transparent';
+    modalBackground.classList.add('active-modal');
 
     setTimeout(() => {
       const cells = document.querySelectorAll('.cell');
@@ -215,8 +228,7 @@ function openCell(id) {
       modalResult.innerHTML = `Game over. Try again!`;
       modalResult.append(closeBtn);
       closeBtn.addEventListener('click', () => {
-        modal.classList.remove('active');
-        enableModeBtns();
+        closeModal();
       });
     }, 1300);
     return;
@@ -470,12 +482,14 @@ export function switchScreenMode() {
   const screenMode = localStorage.getItem('screen-mode');
   if (screenMode == 'light') {
     modeSwitcher.src = './assets/moon-icon.png';
+    modeSwitcher.alt = 'moon icon';
 
     titleImg.src = './assets/title-black.png';
     titleImg.alt = 'dark title';
     document.body.className = 'light-mode';
   } else if (screenMode == 'dark') {
     modeSwitcher.src = './assets/sun-icon.png';
+    modeSwitcher.alt = 'sun icon';
 
     titleImg.src = './assets/title-light.png';
     titleImg.alt = 'light title';
@@ -489,11 +503,13 @@ export function switchSoundMode() {
 
   if (soundMode == 'on' || !soundMode) {
     soundSwitcher.src = './assets/sound-icon.png';
+    soundSwitcher.alt = 'sound icon';
     audios.forEach((el) => {
       el.muted = false;
     });
   } else if (soundMode == 'off') {
     soundSwitcher.src = './assets/muted-icon.png';
+    soundSwitcher.alt = 'muted sound icon';
     audios.forEach((el) => {
       el.muted = true;
     });
@@ -502,8 +518,8 @@ export function switchSoundMode() {
 
 function generateResults(results) {
   modalResult.innerHTML = '';
-
-  results.forEach((res, i) => {
+  let resultToSubmit = results.slice(0, 10);
+  resultToSubmit.forEach((res, i) => {
     let row = document.createElement('div');
     row.className = 'result-row';
     let number = document.createElement('div');
@@ -522,11 +538,10 @@ function generateResults(results) {
 
   modalResult.append(closeBtn);
   modal.classList.add('active');
-
+  modalBackground.classList.add('active-modal');
   disableModeBtns();
   closeBtn.addEventListener('click', () => {
-    modal.classList.remove('active');
-    enableModeBtns();
+    closeModal();
   });
 }
 
@@ -545,6 +560,7 @@ function saveState() {
 function changeModeOfBombs(size, bombs) {
   clearInterval(interval);
   modal.classList.remove('active');
+  modalBackground.classList.remove('active-modal');
   field.innerHTML = '';
   field.className = `field-${localStorage.getItem('mode')}`;
   flag.innerHTML = bombs;
@@ -561,12 +577,8 @@ field.addEventListener('click', (event) => {
     saveState();
     checkWinner();
   } else {
-    createBobms(SIZE, bombsQuantity);
-    if (arrayOfBobmsIndexes.indexOf(+cell.id) > 1) {
-      createBobms(SIZE, bombsQuantity);
-    } else {
-      openCell(cell.id);
-    }
+    createBobms(SIZE, bombsQuantity, cell.id);
+    openCell(cell.id);
     time = 1;
     timeSec.innerHTML = time;
     interval = setInterval(() => {
@@ -586,14 +598,19 @@ field.addEventListener('contextmenu', (event) => {
   if (flags > 0) {
     flagSound.play();
     let cell = event.target;
-    if (cell.innerHTML == '⚐') {
+    if (cell.innerHTML == '⚐' && cell.disabled === true) {
       cell.innerHTML = '';
-      removedFlagsCount();
-    } else {
-      cell.disabled = false;
-      cell.style.color = 'red';
-      cell.innerHTML = '&#9872';
 
+      cell.disabled = false;
+      cell.classList.remove('flagged-cell');
+      removedFlagsCount();
+    } else if (cell.disabled === true) {
+      return;
+    } else {
+      cell.disabled = true;
+      cell.innerHTML = '&#9872';
+      cell.style.color = 'red';
+      cell.classList.add('flagged-cell');
       placedFlagsCount();
     }
 
@@ -661,9 +678,15 @@ changeBombsBtn.addEventListener('click', () => {
 });
 
 bombsChoice.addEventListener('change', () => {
-  if (bombsChoice.value > 99) {
+  if (bombsChoice.value > 99 || bombsChoice.value < 10) {
     changeBombsBtn.disabled = true;
   } else {
     changeBombsBtn.disabled = false;
   }
+});
+
+modalBackground.addEventListener('click', () => {
+  modalBackground.classList.remove('active-modal');
+  modal.classList.remove('active');
+  enableModeBtns();
 });
