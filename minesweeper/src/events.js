@@ -62,7 +62,6 @@ function addNewGame(bombs) {
   clearInterval(interval);
 
   if (localStorage.getItem('state')) {
-    console.log('state');
     let arrayOfCells = JSON.parse(localStorage.getItem('state'));
 
     arrayOfCells.forEach((el) => {
@@ -71,14 +70,11 @@ function addNewGame(bombs) {
       cell.id = el.id;
       cell.disabled = el.state;
       cell.innerHTML = el.content;
-      if (el.content == '⚐') {
-        cell.classList.add('flagged-cell');
-      }
+
       colorGenerator(+el.content, cell);
       field.append(cell);
     });
     arrayOfBobmsIndexes = JSON.parse(localStorage.getItem('bombs'));
-    console.log(arrayOfBobmsIndexes);
 
     clicks = Number(localStorage.getItem('clicks'));
     click.innerHTML = clicks;
@@ -203,13 +199,8 @@ function getDate() {
 function openCell(id) {
   let value = Number(id);
   let cell = document.getElementById(id);
-  cell.classList.remove('flagged-cell');
-  if (
-    id < 0 ||
-    id > SIZE * SIZE ||
-    cell.disabled == true ||
-    cell.classList.contains('flagged-cell')
-  ) {
+
+  if (value < 0 || value > SIZE * SIZE || cell.disabled == true) {
     return;
   }
 
@@ -611,26 +602,25 @@ field.addEventListener('click', (event) => {
 
 field.addEventListener('contextmenu', (event) => {
   event.preventDefault();
-
   flagSound.play();
   let cell = event.target;
+
   if (!localStorage.getItem('state')) {
-    return;
+    createBobms(SIZE, bombsQuantity, cell.id);
   }
   if (cell.innerHTML == '⚐' && cell.disabled === true) {
     cell.innerHTML = '';
     cell.disabled = false;
-    cell.classList.remove('flagged-cell');
     saveState();
     removedFlagsCount();
-  } else if (cell.disabled === true) {
+  } else if (cell.disabled == true) {
     return;
   } else {
     if (flags > 0) {
       cell.disabled = true;
       cell.innerHTML = '&#9872';
       cell.style.color = 'red';
-      cell.classList.add('flagged-cell');
+
       placedFlagsCount();
       saveState();
     }
