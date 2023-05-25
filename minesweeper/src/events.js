@@ -62,17 +62,23 @@ function addNewGame(bombs) {
   clearInterval(interval);
 
   if (localStorage.getItem('state')) {
+    console.log('state');
     let arrayOfCells = JSON.parse(localStorage.getItem('state'));
+
     arrayOfCells.forEach((el) => {
       let cell = document.createElement('button');
       cell.classList.add('cell');
       cell.id = el.id;
       cell.disabled = el.state;
       cell.innerHTML = el.content;
+      if (el.content == '⚐') {
+        cell.classList.add('flagged-cell');
+      }
       colorGenerator(+el.content, cell);
       field.append(cell);
     });
     arrayOfBobmsIndexes = JSON.parse(localStorage.getItem('bombs'));
+    console.log(arrayOfBobmsIndexes);
 
     clicks = Number(localStorage.getItem('clicks'));
     click.innerHTML = clicks;
@@ -85,6 +91,7 @@ function addNewGame(bombs) {
     }, 1000);
     flags = Number(localStorage.getItem('flags'));
     flag.innerHTML = flags;
+    createArrayOfNotBombs();
   } else {
     let id = 1;
     clicks = 0;
@@ -122,8 +129,9 @@ function createBobms(count, bombs, openedCellId) {
       }
     }
   }
-  createArrayOfNotBombs();
+
   localStorage.setItem('bombs', JSON.stringify(arrayOfBobmsIndexes));
+  createArrayOfNotBombs();
 }
 
 function createArrayOfNotBombs() {
@@ -195,8 +203,16 @@ function getDate() {
 function openCell(id) {
   let value = Number(id);
   let cell = document.getElementById(id);
+  cell.classList.remove('flagged-cell');
+  if (
+    id < 0 ||
+    id > SIZE * SIZE ||
+    cell.disabled == true ||
+    cell.classList.contains('flagged-cell')
+  ) {
+    return;
+  }
 
-  if (id < 0 || id > SIZE * SIZE || cell.disabled == true) return;
   let countNeighbourBombs = getNeighbourBombCount(id);
 
   if (isBomb(id) && !loss) {
@@ -394,7 +410,7 @@ function openNeighbourCells(id) {
 function getNeighbourBombCount(id) {
   let neighbourCells = [];
   let neighbourBombsCount = 0;
-  let bombsIndexes = JSON.parse(localStorage.getItem('bombs'));
+
   //If first column
   if (id == 1 || (+id - 1) % SIZE == 0) {
     for (let x = +id - SIZE; x < +id - SIZE + 2; x++) {
@@ -405,7 +421,7 @@ function getNeighbourBombCount(id) {
       neighbourCells.push(el + Number(SIZE) * 2);
     });
     neighbourCells.forEach((el) => {
-      bombsIndexes.forEach((bombIndex) => {
+      arrayOfBobmsIndexes.forEach((bombIndex) => {
         el == bombIndex ? (neighbourBombsCount += 1) : '';
       });
     });
@@ -420,7 +436,7 @@ function getNeighbourBombCount(id) {
       neighbourCells.push(el + Number(SIZE) * 2);
     });
     neighbourCells.forEach((el) => {
-      bombsIndexes.forEach((bombIndex) => {
+      arrayOfBobmsIndexes.forEach((bombIndex) => {
         el == bombIndex ? (neighbourBombsCount += 1) : '';
       });
     });
@@ -436,7 +452,7 @@ function getNeighbourBombCount(id) {
     });
 
     neighbourCells.forEach((el) => {
-      bombsIndexes.forEach((bombIndex) => {
+      arrayOfBobmsIndexes.forEach((bombIndex) => {
         el == bombIndex ? (neighbourBombsCount += 1) : '';
       });
     });
@@ -595,23 +611,28 @@ field.addEventListener('click', (event) => {
 
 field.addEventListener('contextmenu', (event) => {
   event.preventDefault();
-  if (flags > 0) {
-    flagSound.play();
-    let cell = event.target;
-    if (cell.innerHTML == '⚐' && cell.disabled === true) {
-      cell.innerHTML = '';
 
-      cell.disabled = false;
-      cell.classList.remove('flagged-cell');
-      removedFlagsCount();
-    } else if (cell.disabled === true) {
-      return;
-    } else {
+  flagSound.play();
+  let cell = event.target;
+  if (!localStorage.getItem('state')) {
+    return;
+  }
+  if (cell.innerHTML == '⚐' && cell.disabled === true) {
+    cell.innerHTML = '';
+    cell.disabled = false;
+    cell.classList.remove('flagged-cell');
+    saveState();
+    removedFlagsCount();
+  } else if (cell.disabled === true) {
+    return;
+  } else {
+    if (flags > 0) {
       cell.disabled = true;
       cell.innerHTML = '&#9872';
       cell.style.color = 'red';
       cell.classList.add('flagged-cell');
       placedFlagsCount();
+      saveState();
     }
 
     localStorage.setItem('placed-flags', JSON.stringify(arrOfPlacedFlags));
